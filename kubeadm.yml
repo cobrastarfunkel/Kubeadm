@@ -24,3 +24,40 @@
         value: "{{ item.value }}"
         state: present
       loop: "{{ sysctl_params }}"
+
+      
+- name: Install kube pkgs Ubuntu
+  hosts: os_Ubuntu
+  gather_facts: false
+  become: yes
+  vars:
+    pre_pkgs:
+        - apt-transport-https
+  tasks:
+    - name: Install Pre packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ pre_pkgs }}"
+
+    - name: Get kube GPG key
+      apt_key:
+        url:  https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
+    - name: Add Kube Repo
+      apt_repository:
+        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+    
+    - name: Install Kube packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ kube_pkgs }}"
+
+    - name: Hold kube_pkgs
+      dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      loop: "{{ kube_pkgs }}"
