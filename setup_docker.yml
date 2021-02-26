@@ -1,18 +1,6 @@
 ---
-- name: Get OS
-  hosts: all
-  tasks:
-    - name: Classify Hosts
-      group_by:
-        key: os_{{ ansible_facts['distribution'] }}
-      tags: always
 
-    - name: Print em
-      debug:
-        msg: "{{ groups }}"
-      tags: 
-        - debug
-        - never
+- import_playbook: group_hosts_by_os.yml
 
 # Pass  -e compose=true if you want compose installed as well
 # Use compose_ver for version

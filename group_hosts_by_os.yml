@@ -1,0 +1,15 @@
+---
+- name: Get OS
+  hosts: all
+  tasks:
+    - name: Classify Hosts
+      group_by:
+        key: os_{{ ansible_facts['distribution'] }}
+      tags: always
+
+    - name: Print em
+      debug:
+        msg: "{{ groups }}"
+      tags: 
+        - debug
+        - never
