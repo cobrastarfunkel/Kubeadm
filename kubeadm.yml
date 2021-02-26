@@ -1,0 +1,26 @@
+---
+
+- import_playbook: setup_docker.yml
+
+- name: Initial Setup
+  hosts: kube_hosts
+  gather_facts: false
+  become: yes
+  vars:
+    sysctl_params:
+      - param: "net.bridge.bridge-nf-call-ip6tables" 
+        value: 1
+      - param: "net.bridge.bridge-nf-call-iptables" 
+        value: 1
+  tasks:
+    - name: Load br_netfilter
+      modprobe:
+        name: br_netfilter
+        state: present
+
+    - name: Iptables sysctl
+      sysctl:
+        name: "{{ item.param }}"
+        value: "{{ item.value }}"
+        state: present
+      loop: "{{ sysctl_params }}"

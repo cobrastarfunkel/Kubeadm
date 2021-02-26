@@ -1,0 +1,65 @@
+---
+- name: Get OS
+  hosts: all
+  tasks:
+    - name: Classify Hosts
+      group_by:
+        key: os_{{ ansible_facts['distribution'] }}
+      tags: always
+
+    - name: Print em
+      debug:
+        msg: "{{ groups }}"
+      tags: 
+        - debug
+        - never
+
+# Pass  -e compose=true if you want compose installed as well
+# Use compose_ver for version
+- name: Install Docker on Ubuntu
+  hosts: os_Ubuntu
+  tags: always
+  become: yes
+  gather_facts: false
+  vars:
+    old_docker_pkgs:
+      - docker
+      - docker-engine
+      - docker.io
+      - containerd
+      - runc
+    new_docker_pkgs:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    compose_ver: 1.28.4
+  tasks:
+    - name: Remove old Docker pkgs
+      apt:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ old_docker_pkgs }}"
+
+    - name: Add Docker GPG Key
+      apt_key:
+        id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+        url:  https://download.docker.com/linux/debian/gpg
+        state: present
+
+    - name: Add Docker Repo
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/debian focal stable
+        state: present
+      when: ansible_distribution_version == 20.04
+
+    - name: Remove old Docker pkgs
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ new_docker_pkgs }}"
+
+    - name: Install Compose
+      get_url:
+        url: "https://github.com/docker/compose/releases/download/{{ compose_ver }}/docker-compose-Linux-x86_64"
+        dest: /usr/local/bin/docker-compose
+      when: compose is defined

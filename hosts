@@ -1,0 +1,20 @@
+[local]
+localhost
+
+[local:vars]
+ansible_connection=local
+
+# Ansible Control Host
+[control]
+localhost
+
+# Kubernetes Hosts
+[kube_control]
+localhost
+
+[pods]
+192.168.0.219
+
+[kube_hosts:children]
+kube_control
+pods
