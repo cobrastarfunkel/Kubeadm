@@ -10,10 +10,10 @@ localhost
 
 # Kubernetes Hosts
 [kube_control]
-localhost
+kube_ctrl ansible_host=localhost
 
 [pods]
-192.168.0.219
+pod01 ansible_host=192.168.0.219
 
 [kube_hosts:children]
 kube_control
