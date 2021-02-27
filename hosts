@@ -10,7 +10,7 @@ localhost
 
 # Kubernetes Hosts
 [kube_control]
-kube_ctrl ansible_host=localhost
+kube_ctrl ansible_host=192.168.0.218
 
 [pods]
 pod01 ansible_host=192.168.0.219
