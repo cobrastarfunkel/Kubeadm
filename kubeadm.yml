@@ -25,6 +25,8 @@
         state: present
       loop: "{{ sysctl_params }}"
 
+        # TODO Set iptables rules
+
       
 - name: Install kube pkgs Ubuntu
   hosts: os_Ubuntu
@@ -49,7 +51,7 @@
       apt_repository:
         repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
         state: present
-    
+
     - name: Install Kube packages
       apt:
         name: "{{ item }}"
@@ -61,3 +63,19 @@
         name: "{{ item }}"
         selection: hold
       loop: "{{ kube_pkgs }}"
+
+
+- name: Install kubectl on control
+  hosts: kube_control
+  gather_facts: false
+  become: yes
+  tasks:
+    - name: Install kubectl
+      apt:
+        name: "kubectl"
+        state: present
+
+    - name: Hold kubectl
+      dpkg_selections:
+        name: "kubectl"
+        selection: hold

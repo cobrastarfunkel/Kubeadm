@@ -12,9 +12,9 @@ localhost
 [kube_control]
 kube_ctrl ansible_host=192.168.0.218
 
-[pods]
-pod01 ansible_host=192.168.0.219
+[kube_nodes]
+node01 ansible_host=192.168.0.219
 
 [kube_hosts:children]
 kube_control
-pods
+kube_nodes

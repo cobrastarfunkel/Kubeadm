@@ -2,4 +2,3 @@
 kube_pkgs:
     - kubelet
     - kubeadm
-    - kubectl
